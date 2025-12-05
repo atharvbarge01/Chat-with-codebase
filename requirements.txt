@@ -1,0 +1,19 @@
+# LlamaIndex and core RAG components
+llama-index-core
+llama-index-llms-gemini
+llama-index-embeddings-gemini
+llama-index-vector-stores-faiss
+llama-index-readers-file
+llama-index-postprocessor-sentence-transformer
+
+# Streamlit and Utilities
+streamlit
+python-dotenv
+
+# Dynamic File Handling
+gitpython
+tree-sitter
+tree-sitter-languages
+
+# Re-ranking model
+sentence-transformers
