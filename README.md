@@ -1,8 +1,8 @@
-# 🤖 Codebase Assistant (Gemini RAG)
+# Codebase Assistant (Gemini RAG)
 
 An advanced RAG-based system designed for navigating, explaining, and searching through large codebases with extreme token efficiency.
 
-## 🚀 Key Features
+## Key Features
 
 - **Dynamic Code Ingestion**: Instantly index any GitHub repository or uploaded ZIP file.
 - **ScaleDown™ Compression**: A specialized syntax-aware compression engine that reduces supporting code context by **~78%**. It preserves class/function signatures and docstrings while eliding implementation details, enabling the model to "see" more of your codebase in a single query.
@@ -10,7 +10,7 @@ An advanced RAG-based system designed for navigating, explaining, and searching 
 - **Multilingual Support**: Powered by `tree-sitter`, supporting Python, JavaScript, Java, C++, and more.
 - **Senior Architect Insights**: Configured with a system prompt that delivers deep, educational, and architectural walkthroughs of your code.
 
-## 🛠 Tech Stack
+## Tech Stack
 
 - **Core Framework**: [LlamaIndex](https://www.llamaindex.ai/)
 - **LLM & Embeddings**: Google Gemini (`gemini-2.1-flash`, `text-embedding-004`)
@@ -19,7 +19,7 @@ An advanced RAG-based system designed for navigating, explaining, and searching 
 - **UI Framework**: [Streamlit](https://streamlit.io/)
 - **Re-ranking**: Sentence-Transformers (Cross-Encoders)
 
-## 📦 Installation
+## Installation
 
 1. **Clone the repository**:
    ```bash
@@ -62,14 +62,14 @@ An advanced RAG-based system designed for navigating, explaining, and searching 
    - "Where is the database connection initialized?"
    - "Can you suggest a refactor for the ScaleDown logic?"
 
-## 📊 ScaleDown Benchmark
+## ScaleDown Benchmark
 The system includes a verification script to demonstrate compression efficiency:
 ```bash
 python verify_compression.py
 ```
 *Result: ~78.61% size reduction while preserving semantic integrity.*
 
-## 📂 Project Structure
+## Project Structure
 - `app.py`: Streamlit frontend and application orchestration.
 - `chat_engine.py`: RAG pipeline, re-ranking, and ScaleDown integration.
 - `compression_utils.py`: Tree-sitter logic for code extraction and summaries.
