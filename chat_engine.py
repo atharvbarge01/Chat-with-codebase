@@ -2,8 +2,39 @@ from llama_index.core import Settings, PromptTemplate
 from llama_index.core.retrievers import VectorIndexRetriever
 from llama_index.core.query_engine import RetrieverQueryEngine
 from llama_index.core.postprocessor import SentenceTransformerRerank
+from llama_index.core.postprocessor.types import BaseNodePostprocessor
+from llama_index.core.schema import NodeWithScore, QueryBundle
 from llama_index.llms.gemini import Gemini
 from llama_index.embeddings.gemini import GeminiEmbedding
+from typing import List, Optional
+from compression_utils import extract_code_summary
+
+class ScaleDownPostprocessor(BaseNodePostprocessor):
+    """
+    Compresses non-top-ranked nodes to preserve context while saving tokens.
+    """
+    top_n_to_keep: int = 1
+
+    def _postprocess_nodes(
+        self, nodes: List[NodeWithScore], query_bundle: Optional[QueryBundle] = None
+    ) -> List[NodeWithScore]:
+        # Always keep the top N nodes fully intact
+        for i, node_with_score in enumerate(nodes):
+            if i < self.top_n_to_keep:
+                continue
+            
+            # Compress the rest
+            original_text = node_with_score.node.get_content()
+            language = node_with_score.node.metadata.get("language", "python")
+            
+            compressed_text = extract_code_summary(original_text, language)
+            
+            # Update node content with a header indicating it was compressed
+            node_with_score.node.set_content(
+                f"--- [CONTEXT COMPRESSED] ---\n{compressed_text}\n---"
+            )
+            
+        return nodes
 
 def setup_query_engine(index, api_key: str = None):
     """
@@ -29,6 +60,9 @@ def setup_query_engine(index, api_key: str = None):
         model="cross-encoder/ms-marco-MiniLM-L-2-v2", 
     )
 
+    # 3. ScaleDown Compression
+    compressor = ScaleDownPostprocessor(top_n_to_keep=2)
+
     template_str = (
         "You are a Senior Software Architect and Code Expert.\n"
         "Your goal is to provide comprehensive, detailed, and educational explanations.\n"
@@ -49,7 +83,7 @@ def setup_query_engine(index, api_key: str = None):
     # 4. Query Engine Construction
     query_engine = RetrieverQueryEngine.from_args(
         retriever=retriever,
-        node_postprocessors=[reranker],
+        node_postprocessors=[reranker, compressor],
         text_qa_template=qa_template # Pass the custom prompt here
     )
     
